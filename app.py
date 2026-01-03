@@ -41,6 +41,17 @@ st.markdown(
 # Sidebar Controls
 # ---------------------------------------------------
 st.sidebar.header("⚙️ Controls")
+LOCATION_MAPPING = {
+    "Ameerpet": 0,
+    "Dilsukhnagar": 1,
+    "Gachibowli": 2,
+    "Kukatpally": 3,
+    "Secunderabad": 4
+}
+location_label = st.sidebar.selectbox(
+    "Location",
+    list(LOCATION_MAPPING.keys())
+)
 
 # Numeric inputs
 strength_mg = st.sidebar.selectbox("Strength (mg)", [250, 500, 650])
@@ -54,6 +65,7 @@ month = st.sidebar.selectbox("Month", list(range(1, 13)))
 quarter = (month - 1) // 3 + 1
 current_inventory = st.sidebar.number_input("Current Inventory", value=1200)
 safety_stock = st.sidebar.number_input("Safety Stock", value=400)
+location = LOCATION_MAPPING[location_label]
 
 # Boolean flags (encoder columns)
 # chronic_use_flag = st.sidebar.checkbox("Chronic Use")
@@ -77,7 +89,7 @@ if predict_btn:
     # -----------------------------
     numeric_cols = [
         "strength_mg", "unit_price", "rolling_mean_3m_sales", "rolling_mean_6m_sales",
-        "sales_growth_yoy", "supplier_reliability_score", "year", "month"
+        "sales_growth_yoy", "supplier_reliability_score", "year", "month","location"
     ]
 
     # -----------------------------
