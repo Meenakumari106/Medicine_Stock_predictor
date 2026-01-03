@@ -20,7 +20,7 @@ st.set_page_config(
 # @st.cache_resource
 def load_models():
     encoder = joblib.load("encoder.pkl")
-    model = joblib.load("XGBOOST.pkl")
+    model = joblib.load("lr_model.pkl")
     return encoder, model
 
 
