@@ -56,10 +56,14 @@ current_inventory = st.sidebar.number_input("Current Inventory", value=1200)
 safety_stock = st.sidebar.number_input("Safety Stock", value=400)
 
 # Boolean flags (encoder columns)
-chronic_use_flag = st.sidebar.checkbox("Chronic Use")
-flu_season_flag = st.sidebar.checkbox("Flu Season")
-festival_season_flag = st.sidebar.checkbox("Festival Season")
-monsoon_flag = st.sidebar.checkbox("Monsoon Season")
+# chronic_use_flag = st.sidebar.checkbox("Chronic Use")
+# flu_season_flag = st.sidebar.checkbox("Flu Season")
+# festival_season_flag = st.sidebar.checkbox("Festival Season")
+# monsoon_flag = st.sidebar.checkbox("Monsoon Season")
+chronic_use_flag = st.sidebar.selectbox("Chronic use", list(range(0, 2)))
+flu_season_flag = st.sidebar.selectbox("Flu Season", list(range(0, 2)))
+festival_season_flag = st.sidebar.selectbox("Festival Season", list(range(0, 2)))
+monsoon_flag = st.sidebar.selectbox("Monsoon ", list(range(0, 2)))
 
 predict_btn = st.sidebar.button("🚀 Predict Stock")
 
