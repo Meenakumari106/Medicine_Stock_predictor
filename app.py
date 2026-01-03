@@ -63,6 +63,18 @@ dosage_form_label = st.sidebar.selectbox(
     "Dosage Form",
     list(DOSAGE_FORM_MAPPING.keys())
 )
+THERAPEUTIC_CATEGORY_MAPPING = {
+    "Antibiotic": 0,
+    "CNS": 1,
+    "Cardiac": 2,
+    "Diabetes": 3,
+    "Respiratory": 4
+}
+therapeutic_category_label = st.sidebar.selectbox(
+    "Therapeutic Category",
+    list(THERAPEUTIC_CATEGORY_MAPPING.keys())
+)
+therapeutic_category = THERAPEUTIC_CATEGORY_MAPPING[therapeutic_category_label]
 
 
 # Numeric inputs
@@ -103,7 +115,7 @@ if predict_btn:
     # -----------------------------
     numeric_cols = [
         "strength_mg", "unit_price", "rolling_mean_3m_sales", "rolling_mean_6m_sales",
-        "sales_growth_yoy", "supplier_reliability_score", "year", "month","location","dosage_form"
+        "sales_growth_yoy", "supplier_reliability_score", "year", "month","location","dosage_form","therapeutic_category"
     ]
 
     # -----------------------------
