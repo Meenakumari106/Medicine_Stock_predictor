@@ -86,35 +86,55 @@ predict_btn = st.sidebar.button("🚀 Predict Stock")
 # ---------------------------------------------------
 # Prediction Logic
 # ---------------------------------------------------
+# if predict_btn:
+
+#     input_df = pd.DataFrame({
+#         "strength_mg": [strength_mg],
+#         "unit_price": [unit_price],
+#         "historical_sales_qty": [historical_sales_qty],
+#         "rolling_mean_3m_sales": [rolling_mean_3m_sales],
+#         "rolling_mean_6m_sales": [rolling_mean_6m_sales],
+#         "sales_growth_yoy": [sales_growth_yoy],
+#         "demand_volatility": [demand_volatility],
+#         "lead_time_days": [lead_time_days],
+#         "supplier_reliability_score": [supplier_reliability_score],
+#         "current_inventory": [current_inventory],
+#         "safety_stock": [safety_stock],
+#         "year": [year],
+#         "month": [month],
+#         "quarter": [quarter],
+#         "therapeutic_category": [therapeutic_category],
+#         "dosage_form": [dosage_form],
+#         "location": [location],
+#         "chronic_use_flag": [int(chronic_use_flag)],
+#         "flu_season_flag": [int(flu_season_flag)],
+#         "festival_season_flag": [int(festival_season_flag)],
+#         "monsoon_flag": [int(monsoon_flag)],
+#     })
+
+    # X_transformed = encoder.transform(input_df)
+    # predicted_demand = int(model.predict(X_transformed)[0])
 if predict_btn:
-
-    input_df = pd.DataFrame({
-        "strength_mg": [strength_mg],
-        "unit_price": [unit_price],
-        "historical_sales_qty": [historical_sales_qty],
-        "rolling_mean_3m_sales": [rolling_mean_3m_sales],
-        "rolling_mean_6m_sales": [rolling_mean_6m_sales],
-        "sales_growth_yoy": [sales_growth_yoy],
-        "demand_volatility": [demand_volatility],
-        "lead_time_days": [lead_time_days],
-        "supplier_reliability_score": [supplier_reliability_score],
-        "current_inventory": [current_inventory],
-        "safety_stock": [safety_stock],
-        "year": [year],
-        "month": [month],
-        "quarter": [quarter],
-        "therapeutic_category": [therapeutic_category],
-        "dosage_form": [dosage_form],
-        "location": [location],
-        "chronic_use_flag": [int(chronic_use_flag)],
-        "flu_season_flag": [int(flu_season_flag)],
-        "festival_season_flag": [int(festival_season_flag)],
-        "monsoon_flag": [int(monsoon_flag)],
-    })
-
-    X_transformed = encoder.transform(input_df)
+    # 1. Define the numeric features the model actually saw during fit()
+    # Ensure these are in the EXACT order they were in your training X
+    feature_cols = [
+        "strength_mg", "unit_price", "historical_sales_qty", 
+        "rolling_mean_3m_sales", "rolling_mean_6m_sales", 
+        "sales_growth_yoy", "demand_volatility", "lead_time_days", 
+        "supplier_reliability_score", "current_inventory", "safety_stock", 
+        "year", "month", "quarter", "chronic_use_flag", 
+        "flu_season_flag", "festival_season_flag", "monsoon_flag"
+    ]
+    
+    # 2. Extract only these features from the input
+    X_input = input_df[feature_cols]
+    
+    # 3. Transform using the preprocessor (the ColumnTransformer from your previous message)
+    # Note: Ensure 'encoder' here is the ColumnTransformer/Scaler you saved
+    X_transformed = encoder.transform(X_input)
+    
+    # 4. Predict
     predicted_demand = int(model.predict(X_transformed)[0])
-
     reorder_qty = max(
         predicted_demand + safety_stock - current_inventory,
         0
