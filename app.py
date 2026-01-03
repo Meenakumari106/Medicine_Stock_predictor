@@ -52,6 +52,18 @@ location_label = st.sidebar.selectbox(
     "Location",
     list(LOCATION_MAPPING.keys())
 )
+DOSAGE_FORM_MAPPING = {
+    "Inhaler": 0,
+    "Syrup": 1,
+    "Injection": 2,
+    "Tablet": 3,
+    "Capsule": 4
+}
+dosage_form_label = st.sidebar.selectbox(
+    "Dosage Form",
+    list(DOSAGE_FORM_MAPPING.keys())
+)
+
 
 # Numeric inputs
 strength_mg = st.sidebar.selectbox("Strength (mg)", [250, 500, 650])
@@ -66,6 +78,8 @@ quarter = (month - 1) // 3 + 1
 current_inventory = st.sidebar.number_input("Current Inventory", value=1200)
 safety_stock = st.sidebar.number_input("Safety Stock", value=400)
 location = LOCATION_MAPPING[location_label]
+dosage_form = DOSAGE_FORM_MAPPING[dosage_form_label]
+
 
 # Boolean flags (encoder columns)
 # chronic_use_flag = st.sidebar.checkbox("Chronic Use")
@@ -89,7 +103,7 @@ if predict_btn:
     # -----------------------------
     numeric_cols = [
         "strength_mg", "unit_price", "rolling_mean_3m_sales", "rolling_mean_6m_sales",
-        "sales_growth_yoy", "supplier_reliability_score", "year", "month","location"
+        "sales_growth_yoy", "supplier_reliability_score", "year", "month","location","dosage_form"
     ]
 
     # -----------------------------
