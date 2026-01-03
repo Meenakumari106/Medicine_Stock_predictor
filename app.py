@@ -181,7 +181,9 @@ if predict_btn:
         # -----------------------------
         st.subheader("📋 Inventory Projection")
         summary_df = pd.DataFrame({
-            "Metric": ["Predicted Demand", "Current Inventory", "Safety Stock", "Reorder Quantity"],
+            "Metric": ["Predicted Demand", "Current Inventory", "Safety Stock", "Reorder Quantity","location",
+    "dosage_form",
+    "therapeutic_category",],
             "Value": [predicted_demand, current_inventory, safety_stock, reorder_qty]
         })
         st.table(summary_df)
