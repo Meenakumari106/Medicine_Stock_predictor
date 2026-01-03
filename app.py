@@ -17,8 +17,8 @@ st.set_page_config(
 @st.cache_resource
 def load_models():
     try:
-        encoder = joblib.load("encoder.pkl")  # categorical encoder
-        model = joblib.load("lr_model.pkl")  # linear regression model
+        encoder = joblib.load("encoder.pkl")  # encoder for 5 categorical flags
+        model = joblib.load("lr_model.pkl")  # regression model
         return encoder, model
     except FileNotFoundError:
         st.error("Model files not found! Please upload encoder.pkl and lr_model.pkl.")
@@ -55,18 +55,7 @@ quarter = (month - 1) // 3 + 1
 current_inventory = st.sidebar.number_input("Current Inventory", value=1200)
 safety_stock = st.sidebar.number_input("Safety Stock", value=400)
 
-# Categorical inputs
-therapeutic_category = st.sidebar.selectbox(
-    "Therapeutic Category", ["Analgesic", "Antibiotic", "Cardiac"]
-)
-dosage_form = st.sidebar.selectbox(
-    "Dosage Form", ["Tablet", "Capsule", "Syrup"]
-)
-location = st.sidebar.selectbox(
-    "Location", ["Mumbai", "Hyderabad", "Delhi"]
-)
-
-# Boolean flags
+# Boolean flags (encoder columns)
 chronic_use_flag = st.sidebar.checkbox("Chronic Use")
 flu_season_flag = st.sidebar.checkbox("Flu Season")
 festival_season_flag = st.sidebar.checkbox("Festival Season")
@@ -78,40 +67,44 @@ predict_btn = st.sidebar.button("🚀 Predict Stock")
 # Prediction Logic
 # ---------------------------------------------------
 if predict_btn:
+
     # -----------------------------
-    # Split numeric & categorical
+    # Numeric columns
     # -----------------------------
     numeric_cols = [
         "strength_mg", "unit_price", "rolling_mean_3m_sales", "rolling_mean_6m_sales",
-        "sales_growth_yoy", "supplier_reliability_score", "year", "month", "quarter",
-        "chronic_use_flag", "flu_season_flag", "festival_season_flag", "monsoon_flag"
+        "sales_growth_yoy", "supplier_reliability_score", "year", "month"
     ]
 
-    categorical_cols = ["therapeutic_category", "dosage_form", "location"]
+    # -----------------------------
+    # Encoder columns
+    # -----------------------------
+    encoder_cols = ["chronic_use_flag", "festival_season_flag", "flu_season_flag", "monsoon_flag", "quarter"]
 
+    # -----------------------------
     # Build DataFrame
+    # -----------------------------
     input_df = pd.DataFrame({
-        **{col: [eval(col)] for col in numeric_cols},
-        **{col: [eval(col)] for col in categorical_cols}
+        **{col: [eval(col)] for col in numeric_cols + encoder_cols}
     })
 
     try:
         # -----------------------------
-        # Encode categorical columns
+        # Encode categorical flags
         # -----------------------------
-        X_cat = encoder.transform(input_df[categorical_cols]).toarray()
+        X_encoded = encoder.transform(input_df[encoder_cols]).toarray()
 
-        # Numeric columns as numpy array
-        X_num = input_df[numeric_cols].to_numpy()
+        # Numeric columns as numpy
+        X_numeric = input_df[numeric_cols].to_numpy()
 
         # Combine numeric + encoded categorical
-        X_final = np.hstack([X_num, X_cat])
+        X_final = np.hstack([X_numeric, X_encoded])
 
         # Predict
         prediction = model.predict(X_final)
         predicted_demand = int(prediction[0])
 
-        # Reorder quantity
+        # Calculate reorder quantity
         reorder_qty = max(predicted_demand + safety_stock - current_inventory, 0)
 
         # -----------------------------
@@ -153,7 +146,7 @@ if predict_btn:
 
     except Exception as e:
         st.error(f"Prediction Error: {e}")
-        st.write("Encoder expects columns:", encoder.feature_names_in_)
+        st.write("Encoder expects:", encoder.feature_names_in_)
         st.write("Provided columns:", list(input_df.columns))
 
 else:
