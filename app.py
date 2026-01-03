@@ -127,11 +127,11 @@ if predict_btn:
 #     ]
     
     # 2. Extract only these features from the input
-    X_input = input_df[feature_cols]
+    # X_input = input_df[feature_cols]
     
     # 3. Transform using the preprocessor (the ColumnTransformer from your previous message)
     # Note: Ensure 'encoder' here is the ColumnTransformer/Scaler you saved
-    X_transformed = encoder.transform(X_input)
+    X_transformed = encoder.transform(input_df)
     
     # 4. Predict
     predicted_demand = int(model.predict(X_transformed)[0])
