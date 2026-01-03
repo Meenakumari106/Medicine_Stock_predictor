@@ -83,92 +83,34 @@ monsoon_flag = st.sidebar.checkbox("Monsoon Season")
 
 predict_btn = st.sidebar.button("🚀 Predict Stock")
 
-# ---------------------------------------------------
-# Prediction Logic
-# ---------------------------------------------------
-# if predict_btn:
-
-#     input_df = pd.DataFrame({
-#         "strength_mg": [strength_mg],
-#         "unit_price": [unit_price],
-#         "historical_sales_qty": [historical_sales_qty],
-#         "rolling_mean_3m_sales": [rolling_mean_3m_sales],
-#         "rolling_mean_6m_sales": [rolling_mean_6m_sales],
-#         "sales_growth_yoy": [sales_growth_yoy],
-#         "demand_volatility": [demand_volatility],
-#         "lead_time_days": [lead_time_days],
-#         "supplier_reliability_score": [supplier_reliability_score],
-#         "current_inventory": [current_inventory],
-#         "safety_stock": [safety_stock],
-#         "year": [year],
-#         "month": [month],
-#         "quarter": [quarter],
-#         "therapeutic_category": [therapeutic_category],
-#         "dosage_form": [dosage_form],
-#         "location": [location],
-#         "chronic_use_flag": [int(chronic_use_flag)],
-#         "flu_season_flag": [int(flu_season_flag)],
-#         "festival_season_flag": [int(festival_season_flag)],
-#         "monsoon_flag": [int(monsoon_flag)],
-#     })
-
-    # X_transformed = encoder.transform(input_df)
-    # predicted_demand = int(model.predict(X_transformed)[0])
-# if predict_btn:
-#     # 1. Define the numeric features the model actually saw during fit()
-#     # Ensure these are in the EXACT order they were in your training X
-#     feature_cols = [
-#         "strength_mg", "unit_price", "historical_sales_qty", 
-#         "rolling_mean_3m_sales", "rolling_mean_6m_sales", 
-#         "sales_growth_yoy", "demand_volatility", "lead_time_days", 
-#         "supplier_reliability_score", "current_inventory", "safety_stock", 
-#         "year", "month", "quarter", "chronic_use_flag", 
-#         "flu_season_flag", "festival_season_flag", "monsoon_flag"
-#     ]
-    
-    # # 2. Extract only these features from the input
-    # # X_input = input_df[feature_cols]
-    
-    # # 3. Transform using the preprocessor (the ColumnTransformer from your previous message)
-    # # Note: Ensure 'encoder' here is the ColumnTransformer/Scaler you saved
-    # X_transformed = encoder.transform(input_df)
-    
-    # # 4. Predict
-    # predicted_demand = int(model.predict(X_transformed)[0])
-    # reorder_qty = max(
-    #     predicted_demand + safety_stock - current_inventory,
-    #     0
-    # )
-
 if predict_btn:
-    # 1. Define the exact features your encoder expects
+    # 1. Define the EXACT feature list in the EXACT order from your training
     feature_cols = [
         'strength_mg', 'unit_price', 'historical_sales_qty',
         'rolling_mean_3m_sales', 'rolling_mean_6m_sales', 'sales_growth_yoy',
         'demand_volatility', 'lead_time_days', 'supplier_reliability_score',
-        'current_inventory', 'safety_stock', 
-        'expected_demand_next_month',  # This is likely the column causing the error
+        'current_inventory', 'safety_stock', 'expected_demand_next_month',
         'year', 'month', 'therapeutic_category', 'dosage_form', 'location',
         'chronic_use_flag', 'flu_season_flag', 'festival_season_flag',
         'monsoon_flag', 'quarter'
     ]
 
-    # 2. Create the input dataframe with a dummy value for the target column
-    input_data = pd.DataFrame({
-        "strength_mg": [strength_mg],
-        "unit_price": [unit_price],
-        "historical_sales_qty": [historical_sales_qty],
-        "rolling_mean_3m_sales": [rolling_mean_3m_sales],
-        "rolling_mean_6m_sales": [rolling_mean_6m_sales],
-        "sales_growth_yoy": [sales_growth_yoy],
-        "demand_volatility": [demand_volatility],
-        "lead_time_days": [lead_time_days],
-        "supplier_reliability_score": [supplier_reliability_score],
-        "current_inventory": [current_inventory],
-        "safety_stock": [safety_stock],
-        "expected_demand_next_month": [0], # Dummy value to satisfy the encoder
-        "year": [year],
-        "month": [month],
+    # 2. Build the dictionary with data types that match training
+    data_dict = {
+        "strength_mg": [float(strength_mg)],
+        "unit_price": [float(unit_price)],
+        "historical_sales_qty": [float(historical_sales_qty)],
+        "rolling_mean_3m_sales": [float(rolling_mean_3m_sales)],
+        "rolling_mean_6m_sales": [float(rolling_mean_6m_sales)],
+        "sales_growth_yoy": [float(sales_growth_yoy)],
+        "demand_volatility": [float(demand_volatility)],
+        "lead_time_days": [float(lead_time_days)],
+        "supplier_reliability_score": [float(supplier_reliability_score)],
+        "current_inventory": [float(current_inventory)],
+        "safety_stock": [float(safety_stock)],
+        "expected_demand_next_month": [0.0],  # Dummy value for the target column
+        "year": [int(year)],
+        "month": [int(month)],
         "therapeutic_category": [therapeutic_category],
         "dosage_form": [dosage_form],
         "location": [location],
@@ -176,8 +118,32 @@ if predict_btn:
         "flu_season_flag": [int(flu_season_flag)],
         "festival_season_flag": [int(festival_season_flag)],
         "monsoon_flag": [int(monsoon_flag)],
-        "quarter": [quarter],
-    })
+        "quarter": [int(quarter)]
+    }
+
+    # 3. Convert to DataFrame
+    input_df = pd.DataFrame(data_dict)
+
+    # 4. CRITICAL STEP: Reorder columns to match feature_cols exactly
+    # This fixes the "unseen at fit time" error by aligning the names
+    input_df = input_df[feature_cols]
+
+    try:
+        # 5. Transform and Predict
+        X_transformed = encoder.transform(input_df)
+        prediction = model.predict(X_transformed)
+        predicted_demand = int(prediction[0])
+        
+        # Display Results
+        st.success(f"Predicted Demand: {predicted_demand}")
+        # ... your KPI cards code ...
+        
+    except Exception as e:
+        st.error(f"Prediction Error: {e}")
+        # This helps debug if there is still a mismatch
+        st.write("Columns in your app:", list(input_df.columns))
+
+
 
     # 3. Reorder columns to match the exact training order
     input_data = input_data[feature_cols]
