@@ -17,11 +17,15 @@ st.set_page_config(
 
 
 @st.cache_resource
-# @st.cache_resource
 def load_models():
-    encoder = joblib.load("encoder.pkl")
-    model = joblib.load("lr_model.pkl")
-    return encoder, model
+    # Wrap in try-except to catch missing file errors specifically
+    try:
+        encoder = joblib.load("encoder.pkl")
+        model = joblib.load("lr_model.pkl")
+        return encoder, model
+    except FileNotFoundError:
+        st.error("Model files not found! Please upload encoder.pkl and lr_model.pkl to GitHub.")
+        st.stop()
 
 
 encoder, model = load_models()
