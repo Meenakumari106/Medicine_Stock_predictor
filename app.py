@@ -126,7 +126,14 @@ if predict_btn:
     # -----------------------------
     # Encoder columns
     # -----------------------------
-    encoder_cols = ["chronic_use_flag", "festival_season_flag", "flu_season_flag", "monsoon_flag", "quarter","location","dosage_form","therapeutic_category"]
+    encoder_cols = ["therapeutic_category",
+    "dosage_form",
+    "location",
+    "chronic_use_flag",
+    "flu_season_flag",
+    "festival_season_flag",
+    "monsoon_flag",
+    "quarter"]
 
     # -----------------------------
     # Build DataFrame
