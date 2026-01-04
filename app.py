@@ -102,6 +102,7 @@ medicine_name = st.sidebar.selectbox("Medicine_Id",['CiplaMed_1', 'CiplaMed_2', 
 location=st.sidebar.selectbox("Location", ['Hyderabad - Ameerpet', 'Hyderabad - Dilsukhnagar',
        'Hyderabad - Gachibowli', 'Hyderabad - Kukatpally',
        'Hyderabad - Secunderabad'])
+current_inventory = st.sidebar.number_input("Current Inventory", value=1200)
 year = st.sidebar.number_input("Year", value=2026)
 month = st.sidebar.selectbox("Months", list(range(1, 13)))
 
@@ -113,7 +114,7 @@ sales_growth_yoy = st.sidebar.slider("YoY Sales Growth", 0.0, 1.0, 0.12)
 supplier_reliability_score = st.sidebar.slider("Supplier Reliability", 0.0, 1.0, 0.92)
 
 quarter = (month - 1) // 3 + 1
-current_inventory = st.sidebar.number_input("Current Inventory", value=1200)
+
 safety_stock = st.sidebar.number_input("Safety Stock", value=400)
 
 dosage_form = st.sidebar.selectbox("Dosage Form", ['Inhaler', 'Syrup', 'Injection', 'Tablet', 'Capsule'])
