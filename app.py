@@ -286,10 +286,10 @@ if predict_btn:
         })
         
         st.table(summary_df)
-        except Exception as e:
-            st.error(f"Prediction Error: {e}")
-            st.write("Model input shape:", X_final.shape)
-            st.write("Model input values:", X_final)
+    except Exception as e:
+        st.error(f"Prediction Error: {e}")
+        st.write("Model input shape:", X_final.shape)
+        st.write("Model input values:", X_final)
 
 
 
