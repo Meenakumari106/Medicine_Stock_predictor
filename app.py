@@ -42,8 +42,8 @@ model = load_model()
 # ---------------------------------------------------
 st.markdown(
     """
-    <h1 style='color:#1f4ed8'>💊 Cipla Smart Inventory Forecaster</h1>
-    <p>AI-powered stock requirement prediction & inventory planning</p>
+    <h1 style='color:#1f4ed8'>💊 Cipla Smart Supply Planner</h1>
+    <p>AI-powered stock requirement prediction & Location wise inventory planning</p>
     """,
     unsafe_allow_html=True
 )
@@ -79,20 +79,43 @@ LOCATION_MAP = {
 QUARTER_MAP = {1: 0, 2: 1, 3: 2, 4: 3}
 
 # Numeric inputs
+medicine_name = st.sidebar.selectbox("Medicine_Id",['CiplaMed_1', 'CiplaMed_2', 'CiplaMed_3', 'CiplaMed_4',
+       'CiplaMed_5', 'CiplaMed_6', 'CiplaMed_7', 'CiplaMed_8',
+       'CiplaMed_9', 'CiplaMed_10', 'CiplaMed_11', 'CiplaMed_12',
+       'CiplaMed_13', 'CiplaMed_14', 'CiplaMed_15', 'CiplaMed_16',
+       'CiplaMed_17', 'CiplaMed_18', 'CiplaMed_19', 'CiplaMed_20',
+       'CiplaMed_21', 'CiplaMed_22', 'CiplaMed_23', 'CiplaMed_24',
+       'CiplaMed_25', 'CiplaMed_26', 'CiplaMed_27', 'CiplaMed_28',
+       'CiplaMed_29', 'CiplaMed_30', 'CiplaMed_31', 'CiplaMed_32',
+       'CiplaMed_33', 'CiplaMed_34', 'CiplaMed_35', 'CiplaMed_36',
+       'CiplaMed_37', 'CiplaMed_38', 'CiplaMed_39', 'CiplaMed_40',
+       'CiplaMed_41', 'CiplaMed_42', 'CiplaMed_43', 'CiplaMed_44',
+       'CiplaMed_45', 'CiplaMed_46', 'CiplaMed_47', 'CiplaMed_48',
+       'CiplaMed_49', 'CiplaMed_50', 'CiplaMed_51', 'CiplaMed_52',
+       'CiplaMed_53', 'CiplaMed_54', 'CiplaMed_55', 'CiplaMed_56',
+       'CiplaMed_57', 'CiplaMed_58', 'CiplaMed_59', 'CiplaMed_60',
+       'CiplaMed_61', 'CiplaMed_62', 'CiplaMed_63', 'CiplaMed_64',
+       'CiplaMed_65', 'CiplaMed_66', 'CiplaMed_67', 'CiplaMed_68',
+       'CiplaMed_69', 'CiplaMed_70', 'CiplaMed_71', 'CiplaMed_72',
+       'CiplaMed_73', 'CiplaMed_74', 'CiplaMed_75', 'CiplaMed_76',
+       'CiplaMed_77', 'CiplaMed_78', 'CiplaMed_79', 'CiplaMed_80'])
+location=st.sidebar.selectbox("Location", ['Hyderabad - Ameerpet', 'Hyderabad - Dilsukhnagar',
+       'Hyderabad - Gachibowli', 'Hyderabad - Kukatpally',
+       'Hyderabad - Secunderabad'])
+year = st.sidebar.number_input("Year", value=2026)
+month = st.sidebar.selectbox("Months", list(range(1, 13)))
+
 strength_mg = st.sidebar.selectbox("Strength (mg)", [250, 500, 650])
 unit_price = st.sidebar.number_input("Unit Price (₹)", value=12.5)
 rolling_mean_3m_sales = st.sidebar.number_input("Rolling Mean (3M)", value=1750)
 rolling_mean_6m_sales = st.sidebar.number_input("Rolling Mean (6M)", value=1650)
 sales_growth_yoy = st.sidebar.slider("YoY Sales Growth", 0.0, 1.0, 0.12)
 supplier_reliability_score = st.sidebar.slider("Supplier Reliability", 0.0, 1.0, 0.92)
-year = st.sidebar.number_input("Year", value=2026)
-month = st.sidebar.selectbox("Month", list(range(1, 13)))
+
 quarter = (month - 1) // 3 + 1
 current_inventory = st.sidebar.number_input("Current Inventory", value=1200)
 safety_stock = st.sidebar.number_input("Safety Stock", value=400)
-location=st.sidebar.selectbox("Location", ['Hyderabad - Ameerpet', 'Hyderabad - Dilsukhnagar',
-       'Hyderabad - Gachibowli', 'Hyderabad - Kukatpally',
-       'Hyderabad - Secunderabad'])
+
 dosage_form = st.sidebar.selectbox("Dosage Form", ['Inhaler', 'Syrup', 'Injection', 'Tablet', 'Capsule'])
 therapeutic_category = st.sidebar.selectbox("Therapeutic_category", ['Diabetes', 'CNS', 'Cardiac', 'Respiratory', 'Antibiotic'])
 # location = LOCATION_MAPPING[location_label]
