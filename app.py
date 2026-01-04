@@ -28,7 +28,7 @@ st.set_page_config(
 @st.cache_resource
 def load_model():
     try:
-        model = joblib.load("lr_model(1).pkl")
+        model = joblib.load("lr_model.pkl")
         return model
     except FileNotFoundError:
         st.error("Model file not found! Please upload lr_model.pkl.")
