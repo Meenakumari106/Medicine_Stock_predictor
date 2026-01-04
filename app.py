@@ -41,40 +41,40 @@ st.markdown(
 # Sidebar Controls
 # ---------------------------------------------------
 st.sidebar.header("⚙️ Controls")
-LOCATION_MAPPING = {
-    "Ameerpet": 0,
-    "Dilsukhnagar": 1,
-    "Gachibowli": 2,
-    "Kukatpally": 3,
-    "Secunderabad": 4
-}
-location_label = st.sidebar.selectbox(
-    "Location",
-    list(LOCATION_MAPPING.keys())
-)
-DOSAGE_FORM_MAPPING = {
-    "Inhaler": 0,
-    "Syrup": 1,
-    "Injection": 2,
-    "Tablet": 3,
-    "Capsule": 4
-}
-dosage_form_label = st.sidebar.selectbox(
-    "Dosage Form",
-    list(DOSAGE_FORM_MAPPING.keys())
-)
-THERAPEUTIC_CATEGORY_MAPPING = {
-    "Antibiotic": 0,
-    "CNS": 1,
-    "Cardiac": 2,
-    "Diabetes": 3,
-    "Respiratory": 4
-}
-therapeutic_category_label = st.sidebar.selectbox(
-    "Therapeutic Category",
-    list(THERAPEUTIC_CATEGORY_MAPPING.keys())
-)
-therapeutic_category = THERAPEUTIC_CATEGORY_MAPPING[therapeutic_category_label]
+# LOCATION_MAPPING = {
+#     "Ameerpet": 0,
+#     "Dilsukhnagar": 1,
+#     "Gachibowli": 2,
+#     "Kukatpally": 3,
+#     "Secunderabad": 4
+# }
+# location_label = st.sidebar.selectbox(
+#     "Location",
+#     list(LOCATION_MAPPING.keys())
+# )
+# DOSAGE_FORM_MAPPING = {
+#     "Inhaler": 0,
+#     "Syrup": 1,
+#     "Injection": 2,
+#     "Tablet": 3,
+#     "Capsule": 4
+# }
+# dosage_form_label = st.sidebar.selectbox(
+#     "Dosage Form",
+#     list(DOSAGE_FORM_MAPPING.keys())
+# )
+# THERAPEUTIC_CATEGORY_MAPPING = {
+#     "Antibiotic": 0,
+#     "CNS": 1,
+#     "Cardiac": 2,
+#     "Diabetes": 3,
+#     "Respiratory": 4
+# }
+# therapeutic_category_label = st.sidebar.selectbox(
+#     "Therapeutic Category",
+#     list(THERAPEUTIC_CATEGORY_MAPPING.keys())
+# )
+# therapeutic_category = THERAPEUTIC_CATEGORY_MAPPING[therapeutic_category_label]
 
 
 # Numeric inputs
@@ -89,8 +89,13 @@ month = st.sidebar.selectbox("Month", list(range(1, 13)))
 quarter = (month - 1) // 3 + 1
 current_inventory = st.sidebar.number_input("Current Inventory", value=1200)
 safety_stock = st.sidebar.number_input("Safety Stock", value=400)
-location = LOCATION_MAPPING[location_label]
-dosage_form = DOSAGE_FORM_MAPPING[dosage_form_label]
+location=st.sidebar.selectbox("Location", [Hyderabad - Ameerpet', 'Hyderabad - Dilsukhnagar',
+       'Hyderabad - Gachibowli', 'Hyderabad - Kukatpally',
+       'Hyderabad - Secunderabad'])
+dosage_form = st.sidebar.selectbox("Dosage Form", ['Inhaler', 'Syrup', 'Injection', 'Tablet', 'Capsule'])
+therapeutic_category = st.sidebar.selectbox("Therapeutic_category", ['Diabetes', 'CNS', 'Cardiac', 'Respiratory', 'Antibiotic'])
+# location = LOCATION_MAPPING[location_label]
+# dosage_form = DOSAGE_FORM_MAPPING[dosage_form_label]
 
 
 # Boolean flags (encoder columns)
@@ -115,13 +120,13 @@ if predict_btn:
     # -----------------------------
     numeric_cols = [
         "strength_mg", "unit_price", "rolling_mean_3m_sales", "rolling_mean_6m_sales",
-        "sales_growth_yoy", "supplier_reliability_score", "year", "month","location","dosage_form","therapeutic_category"
+        "sales_growth_yoy", "supplier_reliability_score", "year", "month"
     ]
 
     # -----------------------------
     # Encoder columns
     # -----------------------------
-    encoder_cols = ["chronic_use_flag", "festival_season_flag", "flu_season_flag", "monsoon_flag", "quarter"]
+    encoder_cols = ["chronic_use_flag", "festival_season_flag", "flu_season_flag", "monsoon_flag", "quarter","location","dosage_form","therapeutic_category"]
 
     # -----------------------------
     # Build DataFrame
