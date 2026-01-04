@@ -42,7 +42,7 @@ st.markdown(
 # ---------------------------------------------------
 st.sidebar.header("⚙️ Controls")
 # LOCATION_MAPPING = {
-#     "Ameerpet": 0,
+    "Ameerpet": 0,
 #     "Dilsukhnagar": 1,
 #     "Gachibowli": 2,
 #     "Kukatpally": 3,
@@ -133,7 +133,8 @@ if predict_btn:
     "flu_season_flag",
     "festival_season_flag",
     "monsoon_flag",
-    "quarter"]
+    "quarter"
+                ]
 
     # -----------------------------
     # Build DataFrame
