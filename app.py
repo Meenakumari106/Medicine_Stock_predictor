@@ -89,7 +89,7 @@ month = st.sidebar.selectbox("Month", list(range(1, 13)))
 quarter = (month - 1) // 3 + 1
 current_inventory = st.sidebar.number_input("Current Inventory", value=1200)
 safety_stock = st.sidebar.number_input("Safety Stock", value=400)
-location=st.sidebar.selectbox("Location", [Hyderabad - Ameerpet', 'Hyderabad - Dilsukhnagar',
+location=st.sidebar.selectbox("Location", ['Hyderabad - Ameerpet', 'Hyderabad - Dilsukhnagar',
        'Hyderabad - Gachibowli', 'Hyderabad - Kukatpally',
        'Hyderabad - Secunderabad'])
 dosage_form = st.sidebar.selectbox("Dosage Form", ['Inhaler', 'Syrup', 'Injection', 'Tablet', 'Capsule'])
