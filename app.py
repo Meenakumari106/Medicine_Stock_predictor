@@ -262,23 +262,55 @@ if predict_btn:
             "Demand": [rolling_mean_3m_sales, predicted_demand]
         })
         st.line_chart(trend_df.set_index("Month"))
+        st.subheader("📋 Inventory Projection")
+
+        summary_df = pd.DataFrame({
+            "Metric": [
+                "Predicted Demand",
+                "Current Inventory",
+                "Safety Stock",
+                "Reorder Quantity",
+                "Location",
+                "Dosage Form",
+                "Therapeutic Category"
+            ],
+            "Value": [
+                predicted_demand,
+                current_inventory,
+                safety_stock,
+                reorder_qty,
+                location,
+                dosage_form,
+                therapeutic_category
+            ]
+        })
+        
+        st.table(summary_df)
+        except Exception as e:
+            st.error(f"Prediction Error: {e}")
+            st.write("Model input shape:", X_final.shape)
+            st.write("Model input values:", X_final)
+
+
 
         # -----------------------------
         # Summary Table
         # -----------------------------
-        st.subheader("📋 Inventory Projection")
-        summary_df = pd.DataFrame({
-            "Metric": ["Predicted Demand", "Current Inventory", "Safety Stock", "Reorder Quantity","location",
-    "dosage_form",
-    "therapeutic_category",],
-            "Value": [predicted_demand, current_inventory, safety_stock, reorder_qty]
-        })
-        st.table(summary_df)
 
-    except Exception as e:
-        st.error(f"Prediction Error: {e}")
-        st.write("Encoder expects:", encoder.feature_names_in_)
-        st.write("Provided columns:", list(input_df.columns))
+    #     st.subheader("📋 Inventory Projection")
+    #     summary_df = pd.DataFrame({
+    #         "Metric": ["Predicted Demand", "Current Inventory", "Safety Stock", "Reorder Quantity","location",
+    # "dosage_form",
+    # "therapeutic_category",],
+    #         "Value": [predicted_demand, current_inventory, safety_stock, reorder_qty]
+    #     })
+    #     st.table(summary_df)
+
+    # except Exception as e:
+    #     st.error(f"Prediction Error: {e}")
+    #     # st.write("Encoder expects:", encoder.feature_names_in_)
+    #     st.write("Provided columns:", list(input_df.columns))
+
 
 else:
     st.info("👈 Enter parameters and click **Predict Stock**")
