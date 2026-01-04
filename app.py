@@ -14,17 +14,28 @@ st.set_page_config(
 # ---------------------------------------------------
 # Load Models
 # ---------------------------------------------------
+# @st.cache_resource
+# def load_models():
+#     try:
+#         encoder = joblib.load("encoder.pkl")  # encoder for 5 categorical flags
+#         model = joblib.load("lr_model.pkl")  # regression model
+#         return encoder, model
+#     except FileNotFoundError:
+#         st.error("Model files not found! Please upload encoder.pkl and lr_model.pkl.")
+#         st.stop()
+
+# encoder, model = load_models()
 @st.cache_resource
-def load_models():
+def load_model():
     try:
-        encoder = joblib.load("encoder.pkl")  # encoder for 5 categorical flags
-        model = joblib.load("lr_model.pkl")  # regression model
-        return encoder, model
+        model = joblib.load("lr_model.pkl")
+        return model
     except FileNotFoundError:
-        st.error("Model files not found! Please upload encoder.pkl and lr_model.pkl.")
+        st.error("Model file not found! Please upload lr_model.pkl.")
         st.stop()
 
-encoder, model = load_models()
+model = load_model()
+
 
 # ---------------------------------------------------
 # Header
@@ -41,41 +52,31 @@ st.markdown(
 # Sidebar Controls
 # ---------------------------------------------------
 st.sidebar.header("⚙️ Controls")
-# LOCATION_MAPPING = {
-    "Ameerpet": 0,
-#     "Dilsukhnagar": 1,
-#     "Gachibowli": 2,
-#     "Kukatpally": 3,
-#     "Secunderabad": 4
-# }
-# location_label = st.sidebar.selectbox(
-#     "Location",
-#     list(LOCATION_MAPPING.keys())
-# )
-# DOSAGE_FORM_MAPPING = {
-#     "Inhaler": 0,
-#     "Syrup": 1,
-#     "Injection": 2,
-#     "Tablet": 3,
-#     "Capsule": 4
-# }
-# dosage_form_label = st.sidebar.selectbox(
-#     "Dosage Form",
-#     list(DOSAGE_FORM_MAPPING.keys())
-# )
-# THERAPEUTIC_CATEGORY_MAPPING = {
-#     "Antibiotic": 0,
-#     "CNS": 1,
-#     "Cardiac": 2,
-#     "Diabetes": 3,
-#     "Respiratory": 4
-# }
-# therapeutic_category_label = st.sidebar.selectbox(
-#     "Therapeutic Category",
-#     list(THERAPEUTIC_CATEGORY_MAPPING.keys())
-# )
-# therapeutic_category = THERAPEUTIC_CATEGORY_MAPPING[therapeutic_category_label]
+THERAPEUTIC_MAP = {
+    "Antibiotic": 0,
+    "CNS": 1,
+    "Cardiac": 2,
+    "Diabetes": 3,
+    "Respiratory": 4
+}
 
+DOSAGE_FORM_MAP = {
+    "Capsule": 0,
+    "Inhaler": 1,
+    "Injection": 2,
+    "Syrup": 3,
+    "Tablet": 4
+}
+
+LOCATION_MAP = {
+    "Hyderabad - Ameerpet": 0,
+    "Hyderabad - Dilsukhnagar": 1,
+    "Hyderabad - Gachibowli": 2,
+    "Hyderabad - Kukatpally": 3,
+    "Hyderabad - Secunderabad": 4
+}
+
+QUARTER_MAP = {1: 0, 2: 1, 3: 2, 4: 3}
 
 # Numeric inputs
 strength_mg = st.sidebar.selectbox("Strength (mg)", [250, 500, 650])
@@ -96,6 +97,11 @@ dosage_form = st.sidebar.selectbox("Dosage Form", ['Inhaler', 'Syrup', 'Injectio
 therapeutic_category = st.sidebar.selectbox("Therapeutic_category", ['Diabetes', 'CNS', 'Cardiac', 'Respiratory', 'Antibiotic'])
 # location = LOCATION_MAPPING[location_label]
 # dosage_form = DOSAGE_FORM_MAPPING[dosage_form_label]
+therapeutic_category = THERAPEUTIC_MAP[therapeutic_category]
+dosage_form = DOSAGE_FORM_MAP[dosage_form]
+location = LOCATION_MAP[location]
+quarter = QUARTER_MAP[quarter]
+
 
 
 # Boolean flags (encoder columns)
@@ -114,29 +120,94 @@ predict_btn = st.sidebar.button("🚀 Predict Stock")
 # Prediction Logic
 # ---------------------------------------------------
 if predict_btn:
+    numerical_features = [
+    "strength_mg",
+    "unit_price",
+    "historical_sales_qty",
+    "rolling_mean_3m_sales",
+    "rolling_mean_6m_sales",
+    "sales_growth_yoy",
+    "demand_volatility",
+    "lead_time_days",
+    "supplier_reliability_score",
+    "current_inventory",
+    "safety_stock",
+    "expected_demand_next_month",
+    "year",
+    "month"
+ ]
+
+    categorical_features = [
+        "therapeutic_category",
+        "dosage_form",
+        "location",
+        "chronic_use_flag",
+        "flu_season_flag",
+        "festival_season_flag",
+        "monsoon_flag",
+        "quarter"
+    ]
+
 
     # -----------------------------
     # Numeric columns
     # -----------------------------
-    numeric_cols = [
-        "strength_mg", "unit_price", "rolling_mean_3m_sales", "rolling_mean_6m_sales",
-        "sales_growth_yoy", "supplier_reliability_score", "year", "month"
-    ]
+    # numeric_cols = [
+    #     "strength_mg", "unit_price", "rolling_mean_3m_sales", "rolling_mean_6m_sales",
+    #     "sales_growth_yoy", "supplier_reliability_score", "year", "month"
+    # ]
 
     # -----------------------------
     # Encoder columns
     # -----------------------------
-    encoder_cols = ["therapeutic_category",
-    "dosage_form",
-    "location",
-    "chronic_use_flag",
-    "flu_season_flag",
-    "festival_season_flag",
-    "monsoon_flag",
-    "quarter"
-                ]
+    # encoder_cols = ["therapeutic_category",
+    # "dosage_form",
+    # "location",
+    # "chronic_use_flag",
+    # "flu_season_flag",
+    # "festival_season_flag",
+    # "monsoon_flag",
+    # "quarter"
+    #             ]
 
-    # -----------------------------
+    historical_sales_qty = rolling_mean_3m_sales
+    demand_volatility = 0.15
+    lead_time_days = 30
+    expected_demand_next_month = rolling_mean_3m_sales
+
+
+    X_final = np.array([[
+    strength_mg,
+    unit_price,
+    historical_sales_qty,
+    rolling_mean_3m_sales,
+    rolling_mean_6m_sales,
+    sales_growth_yoy,
+    demand_volatility,
+    lead_time_days,
+    supplier_reliability_score,
+    current_inventory,
+    safety_stock,
+    expected_demand_next_month,
+    year,
+    month,
+    therapeutic_category,
+    dosage_form,
+    location,
+    chronic_use_flag,
+    flu_season_flag,
+    festival_season_flag,
+    monsoon_flag,
+    quarter
+]])
+
+
+
+
+
+    
+
+    # # -----------------------------
     # Build DataFrame
     # -----------------------------
     input_df = pd.DataFrame({
@@ -147,17 +218,20 @@ if predict_btn:
         # -----------------------------
         # Encode categorical flags
         # -----------------------------
-        X_encoded = encoder.transform(input_df[encoder_cols]).toarray()
+        # X_encoded = encoder.transform(input_df[encoder_cols]).toarray()
 
         # Numeric columns as numpy
-        X_numeric = input_df[numeric_cols].to_numpy()
+        # X_numeric = input_df[numeric_cols].to_numpy()
 
         # Combine numeric + encoded categorical
-        X_final = np.hstack([X_numeric, X_encoded])
+        # X_final = np.hstack([X_numeric, X_encoded])
 
         # Predict
-        prediction = model.predict(X_final)
-        predicted_demand = int(prediction[0])
+        # prediction = model.predict(X_final)
+        # predicted_demand = int(prediction[0])
+        prediction_log = model.predict(X_final)
+        predicted_demand = int(np.expm1(prediction_log[0]))
+
 
         # Calculate reorder quantity
         reorder_qty = max(predicted_demand + safety_stock - current_inventory, 0)
