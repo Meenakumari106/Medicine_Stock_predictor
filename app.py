@@ -210,9 +210,9 @@ if predict_btn:
     # # -----------------------------
     # Build DataFrame
     # -----------------------------
-    input_df = pd.DataFrame({
-        **{col: [eval(col)] for col in numeric_cols + encoder_cols}
-    })
+    # input_df = pd.DataFrame({
+    #     **{col: [eval(col)] for col in numeric_cols + encoder_cols}
+    # })
 
     try:
         # -----------------------------
